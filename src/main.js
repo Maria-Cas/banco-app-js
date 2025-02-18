@@ -4,7 +4,7 @@ document.querySelector('#app').innerHTML = `
     <nav>
       <p class="welcome">Log in to get started</p>
       <img src="logo.png" alt="Logo" class="logo" />
-      <form class="login">
+      <form class="login" >
         <input
           type="text"
           placeholder="user"
@@ -118,6 +118,7 @@ const account2 = {
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
+
 }
 
 const account3 = {
@@ -161,3 +162,64 @@ const inputTransferAmount = document.querySelector('.form__input--amount')
 const inputLoanAmount = document.querySelector('.form__input--loan-amount')
 const inputCloseUsername = document.querySelector('.form__input--user')
 const inputClosePin = document.querySelector('.form__input--pin')
+
+
+//creamos el campo username para todas las cuentas de usuarios
+
+//usamos forEach para modificar el array original, en otro caso map.
+const createUsernameField = function (account) {
+  account.forEach (function (account) {
+    account.username = account.owner  //juan sanchez
+    .toLowerCase()   //coges juan Sanchez  y me lo divides
+    .split(' ')   //cambia a ['juan', 'sanchez']
+    .map(name => name[0]) //cogeriamos el primer elemento ['j','s']
+    .join('')
+    
+  })
+  
+}
+
+createUsernameField(accounts)
+
+btnLogin.addEventListener('click',function (e) {
+
+  //evitar que el formulario se envie
+  e.preventDefault();
+
+  //recojo el username y el pin y los comparo con los datos de la cuenta 
+  const inputUsername = inputLoginUsername.value;
+  const inputPin = Number(inputLoginPin.value);
+
+  const account = accounts
+  .find((account) => account.username === inputUsername )     //me filtra el elemento y le pongo las dos condiciones
+
+
+  if (account && account.pin === inputPin) {  //comprueba que objeto exista y si existe comprueba que el pin sea correcto
+    containerApp.style.opacity = 100;
+
+    //si esta bien mensaje de bienvenida y que se vea la aplicacion
+    labelWelcome.textContent = `Bienvenido, ${account.owner.split(' ')[0]}`
+    //limpiar formulario
+    inputLoginUsername.value = inputLoginPin.value = '';
+
+  //cargar los datos (movimiento de las cuentas
+  updateUI(account);
+  }
+  else {
+    console.log('Credenciales incorrectas')
+  }
+
+});
+
+const updateUI = function (account) {
+  //mostrar el balance
+ displayMovements(account.movements);
+  //mostrar el balance
+  calculateBalance(account);
+  //mostrar el resumen
+  calculateSummary(account);
+};
+
+//TAREA SABER CALCULAR EL BALANCE -> map + reduce
+    //los ingresos y los gastos -> map + filter + reduce
+
