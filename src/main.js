@@ -1,4 +1,5 @@
 import './style.css'
+import accounts from './accounts.js'
 
 document.querySelector('#app').innerHTML = `
     <nav>
@@ -104,39 +105,6 @@ document.querySelector('#app').innerHTML = `
       </p>
     </main>
 `
-
-// Data
-const account1 = {
-  owner: 'Juan Sánchez',
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
-  interestRate: 1.2, // %
-  pin: 1111,
-}
-
-const account2 = {
-  owner: 'María Portazgo',
-  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
-  interestRate: 1.5,
-  pin: 2222,
-
-}
-
-const account3 = {
-  owner: 'Estefanía Pueyo',
-  movements: [200, -200, 340, -300, -20, 50, 400, -460],
-  interestRate: 0.7,
-  pin: 3333,
-}
-
-const account4 = {
-  owner: 'Javier Rodríguez',
-  movements: [430, 1000, 700, 50, 90],
-  interestRate: 1,
-  pin: 4444,
-}
-
-const accounts = [account1, account2, account3, account4]
-
 // Elements
 const labelWelcome = document.querySelector('.welcome')
 const labelDate = document.querySelector('.date')
@@ -174,10 +142,8 @@ const createUsernameField = function (account) {
     .split(' ')   //cambia a ['juan', 'sanchez']
     .map(name => name[0]) //cogeriamos el primer elemento ['j','s']
     .join('')
-    
-  })
-  
-}
+    });
+};
 
 createUsernameField(accounts)
 
@@ -211,15 +177,40 @@ btnLogin.addEventListener('click',function (e) {
 
 });
 
-const updateUI = function (account) {
+const updateUI = function ({movements}) {  //destructuramos los argumentos de la funcion
+  
   //mostrar el balance
- displayMovements(account.movements);
+ displayMovements(movements);
   //mostrar el balance
-  calculateBalance(account);
+  displayBalance(movements);
   //mostrar el resumen
-  calculateSummary(account);
+  displaySummary(movements);
 };
 
-//TAREA SABER CALCULAR EL BALANCE -> map + reduce
-    //los ingresos y los gastos -> map + filter + reduce
+const displayBalance = function (movements){
+  //calculamos la suma de ingresos y retiradas en efectivo
+  const balance = movements.reduce(
+    (total, movement) => total + movement,
+    0
+  )
+  //actualizamos el DOM
+  labelBalance.textContent = `${balance.toFixed(2)}€`; //ajustamos a dos decimales
+}
+
+const displayMovements = function (movements) {
+
+}
+
+const displaySummary = function (movements) {
+// const =... Ingresos, movimientos>0
+  const sumIN= movements
+  .filter(movement => movement > 0)
+  .reduce((total, movement) => total + movement, 0)
+  labelSumIn.textContent = `${sumIN.toFixed(2)}€`;
+  // const sumOut =... retirada de dinero moviemientos<0
+  const sumOut = movements
+  .filter(movement => movement < 0)
+  .reduce((total, movement) => total + movement, 0)
+  labelSumOut.textContent = `${Math.abs(sumOut).toFixed(2)}€`;
+}
 
