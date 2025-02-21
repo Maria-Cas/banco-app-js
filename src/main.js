@@ -198,7 +198,26 @@ const displayBalance = function (movements){
 }
 
 const displayMovements = function (movements) {
+  //vaciamos el HTML
+  containerMovements.innerHTML = ''; 
 
+  //recorremos los movimientos y los pintamos en el HTML
+  movements.forEach(function (mov, index) {
+  //creamos el html por cada movimiento
+    const type = mov > 0 ? 'deposit' : 'withdrawal';
+  //creamos el HTML
+    const html = `
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">${index + 1
+    } ${type=== "withdrawal" ? "withdrawal" : "deposit"}</div>
+        <div class="movements__date">3 days ago</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
+      </div>
+    `;
+  
+  //insertamos el html en el DOM
+  containerMovements.insertAdjacentHTML('afterbegin', html);
+  });
 }
 
 const displaySummary = function (movements) {
