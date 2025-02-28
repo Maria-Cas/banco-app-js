@@ -241,6 +241,8 @@ btnClose.addEventListener("click", function (e) {
     inputCloseUsername.value === currentAccount.username &&
     Number(inputClosePin.value) === currentAccount.pin
   ) {
+    const ownerName = currentAccount.owner; // Guardamos el nombre antes de borrar la cuenta
+
     // Encontrar el índice de la cuenta en el array
     const index = accounts.findIndex(
       (acc) => acc.username === currentAccount.username
@@ -255,8 +257,13 @@ btnClose.addEventListener("click", function (e) {
 
     // Limpiar los campos
     inputCloseUsername.value = inputClosePin.value = "";
+
+    // Mostrar mensaje de confirmación
+    alert(
+      `👋 Cuenta de ${ownerName} ha sido eliminada correctamente.\n\n`
+    );
   } else {
-    alert(" Credenciales incorrectas. No se puede cerrar la cuenta.");
+    alert("❌ Credenciales incorrectas. No se puede cerrar la cuenta.");
   }
 });
 
@@ -297,4 +304,54 @@ btnLoan.addEventListener("click", function (e) {
       );
     }
   }
+});
+
+btnTransfer.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  // Obtener valores del formulario
+  const amount = Number(inputTransferAmount.value);
+  const receiverAccount = accounts.find(
+    (acc) => acc.username === inputTransferTo.value
+  );
+
+  // Calcular balance actual
+  const currentBalance = currentAccount.movements.reduce(
+    (acc, mov) => acc + mov,
+    0
+  );
+
+  // Limpiar campos del formulario
+  inputTransferAmount.value = inputTransferTo.value = "";
+  inputTransferAmount.blur();
+
+  // Validaciones
+  if (!receiverAccount) {
+    alert("❌ La cuenta destino no existe");
+    return;
+  }
+
+  if (receiverAccount.username === currentAccount.username) {
+    alert("❌ No puedes transferir dinero a tu propia cuenta");
+    return;
+  }
+
+  if (amount <= 0) {
+    alert("❌ La cantidad debe ser mayor que 0");
+    return;
+  }
+
+  if (currentBalance < amount) {
+    alert("❌ No tienes suficiente saldo para realizar esta transferencia");
+    return;
+  }
+
+  // Si pasa todas las validaciones, realizar la transferencia
+  currentAccount.movements.push(-amount);
+  receiverAccount.movements.push(amount);
+
+  // Actualizar UI
+  updateUI(currentAccount);
+
+  alert("✅ Transferencia realizada con éxito");
 });
