@@ -259,3 +259,42 @@ btnClose.addEventListener("click", function (e) {
     alert(" Credenciales incorrectas. No se puede cerrar la cuenta.");
   }
 });
+
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  // Obtener la cantidad solicitada
+  const amount = Number(inputLoanAmount.value);
+
+  // Calcular el balance actual
+  const currentBalance = currentAccount.movements.reduce(
+    (acc, mov) => acc + mov,
+    0
+  );
+
+  // Validar que:
+  // 1. La cantidad sea positiva
+  // 2. La cantidad no exceda el 200% del balance actual
+  if (amount > 0 && amount <= currentBalance * 2) {
+    // Añadir el préstamo a los movimientos
+    currentAccount.movements.push(amount);
+
+    // Actualizar UI
+    updateUI(currentAccount);
+
+    // Limpiar el campo
+    inputLoanAmount.value = "";
+
+    alert("Préstamo concedido con éxito");
+  } else {
+    if (amount <= 0) {
+      alert("La cantidad del préstamo debe ser positiva");
+    } else {
+      alert(
+        `El préstamo no puede exceder ${(currentBalance * 2).toFixed(
+          2
+        )}€ (200% de tu balance actual)`
+      );
+    }
+  }
+});
