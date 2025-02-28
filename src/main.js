@@ -1,7 +1,7 @@
-import './style.css'
-import accounts from './accounts.js'
+import "./style.css";
+import accounts from "./accounts.js";
 
-document.querySelector('#app').innerHTML = `
+document.querySelector("#app").innerHTML = `
     <nav>
       <p class="welcome">Log in to get started</p>
       <img src="logo.png" alt="Logo" class="logo" />
@@ -104,132 +104,158 @@ document.querySelector('#app').innerHTML = `
         You will be logged out in <span class="timer">05:00</span>
       </p>
     </main>
-`
+`;
 // Elements
-const labelWelcome = document.querySelector('.welcome')
-const labelDate = document.querySelector('.date')
-const labelBalance = document.querySelector('.balance__value')
-const labelSumIn = document.querySelector('.summary__value--in')
-const labelSumOut = document.querySelector('.summary__value--out')
-const labelSumInterest = document.querySelector('.summary__value--interest')
-const labelTimer = document.querySelector('.timer')
+const labelWelcome = document.querySelector(".welcome");
+const labelDate = document.querySelector(".date");
+const labelBalance = document.querySelector(".balance__value");
+const labelSumIn = document.querySelector(".summary__value--in");
+const labelSumOut = document.querySelector(".summary__value--out");
+const labelSumInterest = document.querySelector(".summary__value--interest");
+const labelTimer = document.querySelector(".timer");
 
-const containerApp = document.querySelector('.app')
-const containerMovements = document.querySelector('.movements')
+const containerApp = document.querySelector(".app");
+const containerMovements = document.querySelector(".movements");
 
-const btnLogin = document.querySelector('.login__btn')
-const btnTransfer = document.querySelector('.form__btn--transfer')
-const btnLoan = document.querySelector('.form__btn--loan')
-const btnClose = document.querySelector('.form__btn--close')
-const btnSort = document.querySelector('.btn--sort')
+const btnLogin = document.querySelector(".login__btn");
+const btnTransfer = document.querySelector(".form__btn--transfer");
+const btnLoan = document.querySelector(".form__btn--loan");
+const btnClose = document.querySelector(".form__btn--close");
+const btnSort = document.querySelector(".btn--sort");
 
-const inputLoginUsername = document.querySelector('.login__input--user')
-const inputLoginPin = document.querySelector('.login__input--pin')
-const inputTransferTo = document.querySelector('.form__input--to')
-const inputTransferAmount = document.querySelector('.form__input--amount')
-const inputLoanAmount = document.querySelector('.form__input--loan-amount')
-const inputCloseUsername = document.querySelector('.form__input--user')
-const inputClosePin = document.querySelector('.form__input--pin')
-
+const inputLoginUsername = document.querySelector(".login__input--user");
+const inputLoginPin = document.querySelector(".login__input--pin");
+const inputTransferTo = document.querySelector(".form__input--to");
+const inputTransferAmount = document.querySelector(".form__input--amount");
+const inputLoanAmount = document.querySelector(".form__input--loan-amount");
+const inputCloseUsername = document.querySelector(".form__input--user");
+const inputClosePin = document.querySelector(".form__input--pin");
 
 //creamos el campo username para todas las cuentas de usuarios
 
 //usamos forEach para modificar el array original, en otro caso map.
 const createUsernameField = function (account) {
-  account.forEach (function (account) {
-    account.username = account.owner  //juan sanchez
-    .toLowerCase()   //coges juan Sanchez  y me lo divides
-    .split(' ')   //cambia a ['juan', 'sanchez']
-    .map(name => name[0]) //cogeriamos el primer elemento ['j','s']
-    .join('')
-    });
+  account.forEach(function (account) {
+    account.username = account.owner //juan sanchez
+      .toLowerCase() //coges juan Sanchez  y me lo divides
+      .split(" ") //cambia a ['juan', 'sanchez']
+      .map((name) => name[0]) //cogeriamos el primer elemento ['j','s']
+      .join("");
+  });
 };
 
-createUsernameField(accounts)
+createUsernameField(accounts);
 
-btnLogin.addEventListener('click',function (e) {
+let currentAccount;
 
+btnLogin.addEventListener("click", function (e) {
   //evitar que el formulario se envie
   e.preventDefault();
 
-  //recojo el username y el pin y los comparo con los datos de la cuenta 
+  //recojo el username y el pin y los comparo con los datos de la cuenta
   const inputUsername = inputLoginUsername.value;
   const inputPin = Number(inputLoginPin.value);
 
-  const account = accounts
-  .find((account) => account.username === inputUsername )     //me filtra el elemento y le pongo las dos condiciones
+  currentAccount = accounts.find(
+    (account) => account.username === inputUsername
+  ); //me filtra el elemento y le pongo las dos condiciones
 
-
-  if (account && account.pin === inputPin) {  //comprueba que objeto exista y si existe comprueba que el pin sea correcto
+  if (currentAccount && currentAccount.pin === inputPin) {
+    //comprueba que objeto exista y si existe comprueba que el pin sea correcto
     containerApp.style.opacity = 100;
 
     //si esta bien mensaje de bienvenida y que se vea la aplicacion
-    labelWelcome.textContent = `Bienvenido, ${account.owner.split(' ')[0]}`
+    labelWelcome.textContent = `Bienvenido, ${
+      currentAccount.owner.split(" ")[0]
+    }`;
     //limpiar formulario
-    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginUsername.value = inputLoginPin.value = "";
 
-  //cargar los datos (movimiento de las cuentas
-  updateUI(account);
+    //cargar los datos (movimiento de las cuentas
+    updateUI(currentAccount);
+  } else {
+    alert(" Credenciales incorrectas. Por favor, inténtalo de nuevo.");
   }
-  else {
-    console.log('Credenciales incorrectas')
-  }
-
 });
 
-const updateUI = function ({movements}) {  //destructuramos los argumentos de la funcion
-  
+const updateUI = function (account) {
+  //destructuramos los argumentos de la funcion
+
   //mostrar el balance
- displayMovements(movements);
+  displayMovements(account.movements);
   //mostrar el balance
-  displayBalance(movements);
+  displayBalance(account.movements);
   //mostrar el resumen
-  displaySummary(movements);
+  displaySummary(account.movements);
 };
 
-const displayBalance = function (movements){
+const displayBalance = function (movements) {
   //calculamos la suma de ingresos y retiradas en efectivo
-  const balance = movements.reduce(
-    (total, movement) => total + movement,
-    0
-  )
+  const balance = movements.reduce((total, movement) => total + movement, 0);
   //actualizamos el DOM
   labelBalance.textContent = `${balance.toFixed(2)}€`; //ajustamos a dos decimales
-}
+};
 
 const displayMovements = function (movements) {
   //vaciamos el HTML
-  containerMovements.innerHTML = ''; 
+  containerMovements.innerHTML = "";
 
   //recorremos los movimientos y los pintamos en el HTML
   movements.forEach(function (mov, index) {
-  //creamos el html por cada movimiento
-    const type = mov > 0 ? 'deposit' : 'withdrawal';
-  //creamos el HTML
+    //creamos el html por cada movimiento
+    const type = mov > 0 ? "deposit" : "withdrawal";
+    //creamos el HTML
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${index + 1
-    } ${type=== "withdrawal" ? "withdrawal" : "deposit"}</div>
+        <div class="movements__type movements__type--${type}">${index + 1} ${
+      type === "withdrawal" ? "withdrawal" : "deposit"
+    }</div>
         <div class="movements__date">3 days ago</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
-  
-  //insertamos el html en el DOM
-  containerMovements.insertAdjacentHTML('afterbegin', html);
+
+    //insertamos el html en el DOM
+    containerMovements.insertAdjacentHTML("afterbegin", html);
   });
-}
+};
 
 const displaySummary = function (movements) {
-// const =... Ingresos, movimientos>0
-  const sumIN= movements
-  .filter(movement => movement > 0)
-  .reduce((total, movement) => total + movement, 0)
+  // const =... Ingresos, movimientos>0
+  const sumIN = movements
+    .filter((movement) => movement > 0)
+    .reduce((total, movement) => total + movement, 0);
   labelSumIn.textContent = `${sumIN.toFixed(2)}€`;
   // const sumOut =... retirada de dinero moviemientos<0
   const sumOut = movements
-  .filter(movement => movement < 0)
-  .reduce((total, movement) => total + movement, 0)
+    .filter((movement) => movement < 0)
+    .reduce((total, movement) => total + movement, 0);
   labelSumOut.textContent = `${Math.abs(sumOut).toFixed(2)}€`;
-}
+};
 
+btnClose.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  // Verificar que las credenciales coincidan con la cuenta actual
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    // Encontrar el índice de la cuenta en el array
+    const index = accounts.findIndex(
+      (acc) => acc.username === currentAccount.username
+    );
+
+    // Eliminar la cuenta del array
+    accounts.splice(index, 1);
+
+    // Ocultar la UI y mostrar mensaje de inicio
+    containerApp.style.opacity = 0;
+    labelWelcome.textContent = "Log in to get started";
+
+    // Limpiar los campos
+    inputCloseUsername.value = inputClosePin.value = "";
+  } else {
+    alert(" Credenciales incorrectas. No se puede cerrar la cuenta.");
+  }
+});
