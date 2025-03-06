@@ -4,17 +4,20 @@
  * Have fun! 😁
  */
 
+/* Reset básico para todos los elementos */
 * {
   margin: 0;
   padding: 0;
   box-sizing: inherit;
 }
 
+/* Configuración base de la página */
 html {
-  font-size: 62.5%;
+  font-size: 62.5%; /* 1rem = 10px */
   box-sizing: border-box;
 }
 
+/* Estilos generales del body */
 body {
   font-family: "Poppins", sans-serif;
   color: #444;
@@ -23,6 +26,7 @@ body {
   padding: 2rem;
 }
 
+/* Barra de navegación */
 nav {
   display: flex;
   justify-content: space-between;
@@ -30,19 +34,23 @@ nav {
   padding: 0 2rem;
 }
 
+/* Mensaje de bienvenida */
 .welcome {
   font-size: 1.9rem;
   font-weight: 500;
 }
 
+/* Logo del banco */
 .logo {
   height: 5.25rem;
 }
 
+/* Contenedor del formulario de login */
 .login {
   display: flex;
 }
 
+/* Campos de entrada del login */
 .login__input {
   border: none;
   padding: 0.5rem 2rem;
@@ -57,6 +65,7 @@ nav {
   transition: all 0.3s;
 }
 
+/* Estados de los campos de login */
 .login__input:focus {
   outline: none;
   border: 1px solid #ccc;
@@ -66,6 +75,7 @@ nav {
   color: #bbb;
 }
 
+/* Botón de login */
 .login__btn {
   border: none;
   background: none;
@@ -75,15 +85,42 @@ nav {
   transition: all 0.3s;
 }
 
+/* Estados del botón de login */
 .login__btn:hover,
-.login__btn:focus,
-.btn--sort:hover,
-.btn--sort:focus {
+.login__btn:focus {
   outline: none;
   color: #777;
 }
 
-/* MAIN */
+/* Botón de ordenar movimientos */
+.btn--sort {
+  margin-left: auto;
+  background-color: #2d8f69;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 10rem;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Estados del botón de ordenar */
+.btn--sort:hover,
+.btn--sort:focus {
+  outline: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: #39b385;
+}
+
+/* Contenedor principal de la aplicación */
 .app {
   position: relative;
   max-width: 100rem;
@@ -92,12 +129,11 @@ nav {
   grid-template-columns: 4fr 3fr;
   grid-template-rows: auto repeat(3, 15rem) auto;
   gap: 2rem;
-
-  /* NOTE This creates the fade in/out anumation */
-  opacity: 0;
+  opacity: 0; /* Para la animación de fade in/out */
   transition: all 1s;
 }
 
+/* Sección del balance */
 .balance {
   grid-column: 1 / span 2;
   display: flex;
@@ -122,7 +158,7 @@ nav {
   font-weight: 400;
 }
 
-/* MOVEMENTS */
+/* Sección de movimientos */
 .movements {
   grid-row: 2 / span 3;
   background-color: #fff;
@@ -137,6 +173,7 @@ nav {
   border-bottom: 1px solid #eee;
 }
 
+/* Estilos para los tipos de movimientos */
 .movements__type {
   font-size: 1.1rem;
   text-transform: uppercase;
@@ -154,6 +191,7 @@ nav {
   color: #666;
 }
 
+/* Colores para depósitos y retiros */
 .movements__type--deposit {
   background-image: linear-gradient(to top left, #39b385, #9be15d);
 }
@@ -167,7 +205,7 @@ nav {
   margin-left: auto;
 }
 
-/* SUMMARY */
+/* Sección de resumen */
 .summary {
   grid-row: 5 / 6;
   display: flex;
@@ -188,6 +226,7 @@ nav {
   margin-right: 2.5rem;
 }
 
+/* Colores para los diferentes tipos de valores en el resumen */
 .summary__value--in,
 .summary__value--interest {
   color: #66c873;
@@ -197,35 +236,14 @@ nav {
   color: #f5465d;
 }
 
-.btn--sort {
-  margin-left: auto;
-  border: none;
-  background: none;
-  font-size: 1.2rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s;
-  background-color: #f3f3f3;
-}
-
-.btn--sort:hover {
-  background-color: #e0e0e0;
-  transform: scale(1.05);
-}
-
-.btn--sort:active {
-  transform: scale(0.95);
-}
-
-/* OPERATIONS */
+/* Sección de operaciones */
 .operation {
   border-radius: 1rem;
-  padding: 3rem 4rem;
+  padding: 4rem 6rem;
   color: #333;
 }
 
+/* Colores para los diferentes tipos de operaciones */
 .operation--transfer {
   background-image: linear-gradient(to top left, #ffb003, #ffcb03);
 }
@@ -238,52 +256,59 @@ nav {
   background-image: linear-gradient(to top left, #e52a5a, #ff585f);
 }
 
-h2 {
-  margin-bottom: 1.5rem;
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: #333;
+/* Encabezados de las operaciones */
+.operation__header {
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
 }
 
+/* Formularios de operaciones */
 .form {
   display: grid;
-  grid-template-columns: 2.5fr 2.5fr 1fr;
+  grid-template-columns: 4fr 4fr 1fr;
   grid-template-rows: auto auto;
-  gap: 0.4rem 1rem;
+  gap: 1rem 2rem;
 }
 
-/* Exceptions for interst */
+/* Formulario específico para préstamos */
 .form.form--loan {
-  grid-template-columns: 2.5fr 1fr 2.5fr;
+  grid-template-columns: 4fr 1fr 4fr;
 }
-.form__label--loan {
-  grid-row: 2;
-}
-/* End exceptions */
 
+/* Etiquetas de los formularios */
+.form__label {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Campos de entrada de los formularios */
 .form__input {
   width: 100%;
   border: none;
   background-color: rgba(255, 255, 255, 0.4);
   font-family: inherit;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   text-align: center;
   color: #333;
-  padding: 0.3rem 1rem;
+  padding: 1rem 2rem;
   border-radius: 0.7rem;
   transition: all 0.3s;
+  min-width: 15rem;
 }
 
+/* Estado focus de los campos de entrada */
 .form__input:focus {
   outline: none;
   background-color: rgba(255, 255, 255, 0.6);
 }
 
-.form__label {
-  font-size: 1.3rem;
-  text-align: center;
+/* Posicionamiento específico para etiquetas de préstamo */
+.form__label--loan {
+  grid-row: 2;
 }
 
+/* Botones de los formularios */
 .form__btn {
   border: none;
   border-radius: 0.7rem;
@@ -291,11 +316,18 @@ h2 {
   background-color: #fff;
   cursor: pointer;
   transition: all 0.3s;
+  padding: 1rem 1.5rem;
+  width: 100%;
+}
+
+/* Estados de los botones */
+.form__btn:hover {
+  background-color: #f3f3f3;
 }
 
 .form__btn:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #f3f3f3;
 }
 
 .logout-timer {

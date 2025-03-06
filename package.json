@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1"
   }
 }

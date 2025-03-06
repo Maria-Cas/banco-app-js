@@ -131,21 +131,6 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-//creamos el campo username para todas las cuentas de usuarios
-
-//usamos forEach para modificar el array original, en otro caso map.
-const createUsernameField = function (account) {
-  account.forEach(function (account) {
-    account.username = account.owner //juan sanchez
-      .toLowerCase() //coges juan Sanchez  y me lo divides
-      .split(" ") //cambia a ['juan', 'sanchez']
-      .map((name) => name[0]) //cogeriamos el primer elemento ['j','s']
-      .join("");
-  });
-};
-
-createUsernameField(accounts);
-
 let currentAccount;
 
 btnLogin.addEventListener("click", function (e) {
@@ -236,7 +221,7 @@ const displayMovements = function (movements, sort = false) {
       index + 1
     } ${mov.type}</div>
         <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.amount.toFixed(2)}€</div>
+        <div class="movements__value">${mov.amount}€</div>
       </div>
     `;
 
@@ -254,7 +239,7 @@ const displaySummary = function (movements) {
   const sumIN = movements
     .filter((mov) => mov.amount > 0)
     .reduce((total, mov) => total + mov.amount, 0);
-  labelSumIn.textContent = `${sumIN.toFixed(2)}€`;
+  labelSumIn.textContent = `${sumIN}€`;
 
   // Calcular suma de gastos (movimientos negativos)
   const sumOut = Math.abs(
@@ -262,7 +247,7 @@ const displaySummary = function (movements) {
       .filter((mov) => mov.amount < 0)
       .reduce((total, mov) => total + mov.amount, 0)
   );
-  labelSumOut.textContent = `${sumOut.toFixed(2)}€`;
+  labelSumOut.textContent = `${sumOut}€`;
 
   // Calcular intereses (solo sobre depósitos)
   const interest = movements
@@ -270,7 +255,7 @@ const displaySummary = function (movements) {
     .map((deposit) => (deposit.amount * currentAccount.interestRate) / 100) // Calcular interés
     .filter((int) => int >= 1) // Solo intereses >= 1€
     .reduce((acc, int) => acc + int, 0); // Sumar todos los intereses
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = `${interest}€`;
 };
 
 btnClose.addEventListener("click", function (e) {
@@ -299,17 +284,24 @@ btnClose.addEventListener("click", function (e) {
     inputCloseUsername.value = inputClosePin.value = "";
 
     // Mostrar mensaje de confirmación
-    alert(`👋 Cuenta de ${ownerName} ha sido eliminada correctamente.\n\n`);
+    alert(
+      `Tu cuenta ha sido cerrada exitosamente. ¡Gracias por usar nuestros servicios!`
+    );
   } else {
-    alert("❌ Credenciales incorrectas. No se puede cerrar la cuenta.");
+    alert("Error: Credenciales incorrectas. No se pudo cerrar la cuenta.");
   }
 });
 
 btnLoan.addEventListener("click", function (e) {
   e.preventDefault();
-  const amount = Math.floor(inputLoanAmount.value);
+  const amount = Number(inputLoanAmount.value);
+  const currentBalance = currentAccount.movements.reduce(
+    (acc, mov) => acc + mov.amount,
+    0
+  );
+  const maxLoanAmount = currentBalance * 2; // 200% del saldo actual
 
-  if (amount > 0) {
+  if (amount > 0 && amount <= maxLoanAmount) {
     // Crear nuevo movimiento como objeto con la fecha actual
     const newMovement = {
       amount: amount,
@@ -318,15 +310,20 @@ btnLoan.addEventListener("click", function (e) {
 
     currentAccount.movements.push(newMovement);
     updateUI(currentAccount);
+    inputLoanAmount.value = "";
+    alert(`Préstamo aprobado por ${amount}€`);
+  } else if (amount <= 0) {
+    alert("Error: El movimiento del préstamo debe ser mayor a 0€");
+  } else {
+    alert(
+      `Error: El préstamo no puede superar ${maxLoanAmount}€ (200% de tu saldo actual)`
+    );
   }
-
-  // Limpiar campo de entrada
-  inputLoanAmount.value = "";
 });
 
 btnTransfer.addEventListener("click", function (e) {
   e.preventDefault();
-  const amount = +inputTransferAmount.value;
+  const amount = Number(inputTransferAmount.value);
   const receiverAccount = accounts.find(
     (acc) => acc.username === inputTransferTo.value
   );
@@ -349,10 +346,13 @@ btnTransfer.addEventListener("click", function (e) {
 
     // Actualizar la interfaz
     updateUI(currentAccount);
+    inputTransferAmount.value = inputTransferTo.value = "";
+    alert(`Transferencia exitosa de ${amount}€ a ${receiverAccount.owner}`);
+  } else {
+    alert(
+      "Error: No se pudo realizar la transferencia. Verifica el movimiento y el destinatario."
+    );
   }
-
-  // Limpiar campos de entrada
-  inputTransferAmount.value = inputTransferTo.value = "";
 });
 
 btnSort.addEventListener("click", function (e) {
@@ -362,4 +362,35 @@ btnSort.addEventListener("click", function (e) {
 
   // Cambiar el texto y el ícono del botón según el estado
   btnSort.innerHTML = sorted ? "⬆️ SORT" : "⬇️ SORT";
+  alert(
+    sorted
+      ? "Movimientos ordenados de menor a mayor"
+      : "Movimientos ordenados por fecha"
+  );
 });
+
+const startLogOutTimer = function () {
+  let time = 300;
+
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 60) {
+      alert("¡Atención! Tu sesión se cerrará en 1 minuto por inactividad");
+    }
+
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = "Log in to get started";
+      containerApp.style.opacity = 0;
+      alert("Sesión cerrada por inactividad");
+    }
+    time--;
+  };
+
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+};
