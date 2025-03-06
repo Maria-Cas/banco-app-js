@@ -1,5 +1,26 @@
 import "./style.css";
 import accounts from "./accounts.js";
+import moment from "moment";
+import "moment/locale/es"; // Importar el idioma español
+
+// Configurar moment en español con textos personalizados
+moment.locale("es", {
+  relativeTime: {
+    future: "en %s",
+    past: "hace %s",
+    s: "unos segundos",
+    m: "un minuto",
+    mm: "%d minutos",
+    h: "una hora",
+    hh: "%d horas",
+    d: "un día",
+    dd: "%d días",
+    M: "un mes",
+    MM: "%d meses",
+    y: "un año",
+    yy: "%d años",
+  },
+});
 
 document.querySelector("#app").innerHTML = `
     <nav>
@@ -195,38 +216,37 @@ let sorted = false;
  * @param {Array} movements - Array de movimientos de la cuenta
  * @param {boolean} sort - Determina si ordenar por fecha (true = ascendente, false = descendente)
  */
+const formatRelativeDate = function (date) {
+  return moment(date).fromNow(); // Esto mostrará "hace 2 días", "hace 1 hora", etc.
+};
+
+const formatFullDate = function (date) {
+  return moment(date).format("D [de] MMMM [de] YYYY");
+};
+
 const displayMovements = function (movements, sort = false) {
-  // Limpia el contenedor de movimientos
   containerMovements.innerHTML = "";
 
-  // Ordenar los movimientos por fecha
-  const movsToDisplay = sort
-    ? [...movements].sort((a, b) => new Date(a.date) - new Date(b.date)) // Orden ascendente
-    : [...movements].sort((a, b) => new Date(b.date) - new Date(a.date)); // Orden descendente
+  const movs = sort
+    ? movements.slice().sort((a, b) => a.amount - b.amount)
+    : movements;
 
-  // Recorre y muestra cada movimiento
-  movsToDisplay.forEach(function (mov, index) {
-    // Formatear la fecha al formato español
-    const date = new Date(mov.date);
-    const displayDate = new Intl.DateTimeFormat("es-ES", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(date);
+  movs.forEach(function (mov, i) {
+    const type = mov.type;
+    const relativeDate = moment(mov.date).fromNow(); // Esto mostrará "hace 2 días"
+    const fullDate = moment(mov.date).format("D [de] MMMM [de] YYYY");
 
-    // Crear el HTML para cada movimiento
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${mov.type}">${
-      index + 1
-    } ${mov.type}</div>
-        <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.amount}€</div>
+        <div class="movements__type movements__type--${type}">${i + 1} ${
+      mov.type
+    }</div>
+        <div class="movements__date" title="${fullDate}">${relativeDate}</div>
+        <div class="movements__value">${mov.amount.toFixed(2)}€</div>
       </div>
     `;
 
-    // Insertar el HTML al final del contenedor
-    containerMovements.insertAdjacentHTML("beforeend", html);
+    containerMovements.insertAdjacentHTML("afterbegin", html);
   });
 };
 
