@@ -16,7 +16,7 @@ html {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #444;
   background-color: #f3f3f3;
   height: 100vh;
@@ -201,9 +201,22 @@ nav {
   margin-left: auto;
   border: none;
   background: none;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 500;
   cursor: pointer;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  background-color: #f3f3f3;
+}
+
+.btn--sort:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.btn--sort:active {
+  transform: scale(0.95);
 }
 
 /* OPERATIONS */
