@@ -348,7 +348,13 @@ btnTransfer.addEventListener("click", function (e) {
     (acc) => acc.username === inputTransferTo.value
   );
 
-  if (amount > 0 && receiverAccount) {
+  // Calcular el saldo actual
+  const currentBalance = currentAccount.movements.reduce(
+    (acc, mov) => acc + mov.amount,
+    0
+  );
+
+  if (amount > 0 && receiverAccount && amount <= currentBalance) {
     // Crear movimientos para ambas cuentas
     const withdrawalMovement = {
       amount: -amount, // Cantidad negativa para la cuenta que envía
@@ -367,11 +373,17 @@ btnTransfer.addEventListener("click", function (e) {
     // Actualizar la interfaz
     updateUI(currentAccount);
     inputTransferAmount.value = inputTransferTo.value = "";
-    alert(`Transferencia exitosa de ${amount}€ a ${receiverAccount.owner}`);
-  } else {
     alert(
-      "Error: No se pudo realizar la transferencia. Verifica el movimiento y el destinatario."
+      `Transferencia realizada con éxito: ${amount}€ enviados a ${receiverAccount.owner}`
     );
+  } else if (amount > currentBalance) {
+    alert(
+      `Error: Saldo insuficiente. Tu saldo actual es de ${currentBalance}€`
+    );
+  } else if (amount <= 0) {
+    alert("Error: Por favor, introduce una cantidad válida mayor que 0€");
+  } else {
+    alert("Error: No se ha encontrado la cuenta de destino");
   }
 });
 
